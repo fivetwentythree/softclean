@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import type { Database } from "@/lib/types/database";
 
 type Property = Database["public"]["Tables"]["properties"]["Row"];
-
 export default async function PropertiesPage() {
   const supabase = await createClient();
 
@@ -13,50 +13,52 @@ export default async function PropertiesPage() {
     .returns<Property[]>();
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="px-6 py-4">
-        <span className="text-[20px] font-bold text-[#222222]">
-          Sites{" "}
-          <span className="text-[#717171] font-normal">
-            {properties?.length ?? 0}
-          </span>
-        </span>
+    <div className="bg-white min-h-screen pb-28">
+      <div className="px-6 pt-8 pb-4">
+        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+          Your sites
+        </h1>
       </div>
 
       {!properties?.length ? (
-        <div className="mx-6 mb-3 rounded-xl border border-[#EBEBEB] px-5 py-16 text-center">
-          <p className="text-sm text-[#717171]">No sites registered</p>
+        <div
+          className="mx-6 mt-2 rounded-[22px] px-6 py-20 text-center backdrop-blur-2xl"
+          style={{
+            background: "rgba(255, 255, 255, 0.55)",
+            boxShadow:
+              "0 0 0 0.5px rgba(255,255,255,0.6) inset, 0 2px 12px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04)",
+          }}
+        >
+          <p className="text-[15px] text-[#8e8e93]">No sites registered</p>
         </div>
       ) : (
-        properties.map((property) => {
-          const isActive = property.status === "active";
-          const statusColor = isActive ? "#00A699" : "#FFB400";
-          const statusBg = isActive
-            ? "rgba(0, 166, 153, 0.1)"
-            : "rgba(255, 180, 0, 0.1)";
-
-          return (
-            <div
-              key={property.id}
-              className="card-press mx-6 mb-3 rounded-xl border border-[#EBEBEB] px-5 py-4"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-bold text-[#222222]">{property.name}</p>
-                  <p className="text-sm text-[#717171] mt-1">
-                    {property.address}
-                  </p>
+        <div className="px-6 mt-1 space-y-3">
+          {properties.map((property) => {
+            return (
+              <Link
+                key={property.id}
+                href={`/dashboard/properties/${property.id}`}
+                className="card-press block rounded-[22px] px-5 py-[18px] backdrop-blur-2xl"
+                style={{
+                  background: "rgba(255, 255, 255, 0.55)",
+                  boxShadow:
+                    "0 0 0 0.5px rgba(255,255,255,0.6) inset, 0 2px 12px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div className="flex items-start">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[17px] font-semibold text-[#1a1a1a] leading-snug">
+                      {property.name}
+                    </p>
+                    <p className="text-[15px] text-[#6e6e73] mt-0.5">
+                      {property.address}
+                    </p>
+                  </div>
                 </div>
-                <span
-                  className="text-xs font-medium rounded-full px-3 py-1"
-                  style={{ color: statusColor, backgroundColor: statusBg }}
-                >
-                  {isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-            </div>
-          );
-        })
+              </Link>
+            );
+          })}
+        </div>
       )}
     </div>
   );

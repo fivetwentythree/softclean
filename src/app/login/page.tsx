@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Notification } from "@/components/notification";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -65,11 +66,12 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && (
-            <div className="bg-[#FFF0F0] rounded-xl px-4 py-3">
-              <p className="text-sm text-[#FF385C]">{error}</p>
-            </div>
-          )}
+          <Notification
+            message={error ?? ""}
+            type="error"
+            visible={!!error}
+            onDismiss={() => setError(null)}
+          />
 
           <button
             type="submit"

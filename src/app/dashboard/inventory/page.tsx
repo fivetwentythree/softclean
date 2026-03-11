@@ -1,4 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { PropertyStockGroup } from "./property-stock-group";
+import { AddItemButton } from "./add-item-modal";
+import type { Database } from "@/lib/types/database";
 
 type InventoryRow = {
   property_id: string;
@@ -9,86 +12,88 @@ type InventoryRow = {
   item: { name: string; category: string; unit: string } | null;
 };
 
+type Property = Database["public"]["Tables"]["properties"]["Row"];
+
 export default async function InventoryPage() {
   const supabase = await createClient();
 
-  const { data: inventory } = await supabase
-    .from("property_inventory")
-    .select(`
-      *,
-      property:properties(name),
-      item:inventory_items(name, category, unit)
-    `)
-    .order("current_quantity", { ascending: true })
-    .returns<InventoryRow[]>();
+  const [{ data: inventory }, { data: allProperties }] = await Promise.all([
+    supabase
+      .from("property_inventory")
+      .select(`
+        *,
+        property:properties(name),
+        item:inventory_items(name, category, unit)
+      `)
+      .order("current_quantity", { ascending: true })
+      .returns<InventoryRow[]>(),
+    supabase
+      .from("properties")
+      .select("id, name")
+      .order("name")
+      .returns<Pick<Property, "id" | "name">[]>(),
+  ]);
 
-  const critical = inventory?.filter((i) => i.current_quantity <= i.minimum_threshold) ?? [];
-  const ok = inventory?.filter((i) => i.current_quantity > i.minimum_threshold) ?? [];
+  const propertyList = (allProperties ?? []).map((p) => ({
+    id: p.id,
+    name: p.name,
+  }));
+
+  const grouped = new Map<
+    string,
+    { propertyName: string; items: InventoryRow[] }
+  >();
+
+  for (const inv of inventory ?? []) {
+    const key = inv.property_id;
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        propertyName: inv.property?.name ?? "Unknown",
+        items: [],
+      });
+    }
+    grouped.get(key)!.items.push(inv);
+  }
+
+  const properties = Array.from(grouped.entries());
 
   return (
-    <div className="bg-white min-h-screen">
-      {critical.length > 0 && (
-        <>
-          <div className="px-6 pt-6 pb-2">
-            <span className="text-sm font-bold text-[#FF385C]">
-              Critical · {critical.length}
-            </span>
-          </div>
-          {critical.map((inv) => (
-            <div
-              key={`${inv.property_id}-${inv.item_id}`}
-              className="mx-6 mb-3 rounded-xl border-l-4 border-[#FF385C] bg-[#FFF0F0] px-5 py-4 flex items-center justify-between"
-            >
-              <div>
-                <p className="text-sm font-bold text-[#222]">{inv.item?.name}</p>
-                <p className="text-xs text-[#717171] mt-0.5">
-                  {inv.property?.name} · {inv.item?.category}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-[#FF385C]">
-                  {inv.current_quantity}
-                </p>
-                <p className="text-xs text-[#717171]">
-                  min {inv.minimum_threshold} {inv.item?.unit}
-                </p>
-              </div>
-            </div>
-          ))}
-        </>
-      )}
+    <div className="bg-white min-h-screen pb-28">
+      <div className="px-6 pt-8 pb-4 flex items-center justify-between">
+        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+          Stock
+        </h1>
+        <AddItemButton properties={propertyList} />
+      </div>
 
-      {ok.length > 0 && (
-        <>
-          <div className="px-6 pt-6 pb-2">
-            <span className="text-sm font-medium text-[#717171]">
-              In stock · {ok.length}
-            </span>
-          </div>
-          {ok.map((inv) => (
-            <div
-              key={`${inv.property_id}-${inv.item_id}`}
-              className="mx-6 mb-3 rounded-xl border border-[#EBEBEB] px-5 py-4 flex items-center justify-between"
-            >
-              <div>
-                <p className="text-sm font-medium text-[#222]">{inv.item?.name}</p>
-                <p className="text-xs text-[#717171] mt-0.5">
-                  {inv.property?.name}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-[#222]">
-                  {inv.current_quantity} {inv.item?.unit}
-                </p>
-              </div>
-            </div>
-          ))}
-        </>
-      )}
-
-      {!inventory?.length && (
+      {!inventory?.length ? (
         <div className="px-6 py-16 text-center">
           <p className="text-sm text-[#717171]">No inventory tracked</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {properties.map(([propertyId, { propertyName, items }]) => {
+            const critical = items.filter(
+              (i) => i.current_quantity <= i.minimum_threshold
+            );
+
+            return (
+              <PropertyStockGroup
+                key={propertyId}
+                propertyName={propertyName}
+                criticalCount={critical.length}
+                items={items.map((inv) => ({
+                  propertyId: inv.property_id,
+                  itemId: inv.item_id,
+                  itemName: inv.item?.name ?? "Unknown",
+                  category: inv.item?.category ?? "",
+                  unit: inv.item?.unit ?? "units",
+                  quantity: inv.current_quantity,
+                  threshold: inv.minimum_threshold,
+                }))}
+              />
+            );
+          })}
         </div>
       )}
     </div>

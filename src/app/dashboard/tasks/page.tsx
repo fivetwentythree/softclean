@@ -22,12 +22,12 @@ const statusLabel: Record<string, string> = {
   unassigned: "Unassigned",
   assigned: "Assigned",
   in_progress: "In progress",
-  completed: "Completed",
+  completed: "Cleaned",
   issue_reported: "Issue reported",
 };
 
 const groupLabel: Record<string, string> = {
-  active: "Active",
+  active: "Current",
   pending: "Pending",
   done: "Done",
 };

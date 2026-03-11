@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { updateTaskStatus } from "./actions";
+import { Notification, useNotification } from "@/components/notification";
 
 type TaskActionsProps = {
   taskId: string;
@@ -11,14 +12,24 @@ type TaskActionsProps = {
 
 export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProps) {
   const [isPending, startTransition] = useTransition();
+  const notification = useNotification();
 
   const isCleaner = userRole === "cleaner";
   const isManager = userRole === "manager";
   const canAct = isCleaner || isManager;
 
+  const statusLabels: Record<string, string> = {
+    in_progress: "Cleaning started",
+    completed: "Cleaned",
+    issue_reported: "Issue reported",
+  };
+
   function handleUpdate(newStatus: string) {
     startTransition(async () => {
       await updateTaskStatus(taskId, newStatus);
+      const label = statusLabels[newStatus] ?? "Status updated";
+      const type = newStatus === "completed" ? "success" : newStatus === "issue_reported" ? "error" : "info";
+      notification.notify(label, type);
     });
   }
 
@@ -29,7 +40,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
           disabled
           className="bg-[#00A699]/10 text-[#00A699] rounded-full font-semibold py-3.5 w-full text-base cursor-default"
         >
-          ✓ Task completed
+          ✓ Cleaned
         </button>
       </div>
     );
@@ -49,6 +60,12 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
 
   return (
     <div className="px-6 space-y-3">
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        visible={notification.visible}
+        onDismiss={notification.dismiss}
+      />
       {currentStatus === "assigned" && (
         <button
           onClick={() => handleUpdate("in_progress")}
@@ -66,7 +83,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
             disabled={isPending}
             className="bg-[#FF385C] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
           >
-            {isPending ? "Updating..." : "Mark complete"}
+            {isPending ? "Updating..." : "Mark cleaned"}
           </button>
           <button
             onClick={() => handleUpdate("issue_reported")}

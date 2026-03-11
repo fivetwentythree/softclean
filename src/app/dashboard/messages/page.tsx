@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { PropertyMessageGroup } from "./property-message-group";
 
 type Conversation = {
   id: string;
@@ -10,62 +11,146 @@ type Conversation = {
   property: { name: string } | null;
 };
 
+type Message = {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+};
+
+type SenderProfile = {
+  id: string;
+  full_name: string;
+};
+
 export default async function MessagesPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: conversations } = await supabase
-    .from("conversation_participants")
-    .select(`
-      conversation:conversations(
-        id, topic, status, property_id, updated_at,
-        property:properties(name)
-      )
-    `)
-    .eq("user_id", user!.id)
-    .order("joined_at", { ascending: false })
-    .returns<{ conversation: Conversation | null }[]>();
+  const { data: convos } = await supabase
+    .from("conversations")
+    .select(
+      "id, topic, status, property_id, updated_at, property:properties(name)"
+    )
+    .order("updated_at", { ascending: false })
+    .returns<Conversation[]>();
 
-  const convos = conversations
-    ?.map((c) => c.conversation)
-    .filter((c): c is Conversation => c !== null) ?? [];
+  const conversations = convos ?? [];
+
+  // Fetch latest message for each conversation
+  const convoIds = conversations.map((c) => c.id);
+
+  const { data: latestMessages } = convoIds.length
+    ? await supabase
+        .from("messages")
+        .select("id, conversation_id, sender_id, body, created_at")
+        .in("conversation_id", convoIds)
+        .order("created_at", { ascending: false })
+        .returns<Message[]>()
+    : { data: [] as Message[] };
+
+  // Build a map: conversation_id -> latest message
+  const latestMessageMap = new Map<string, Message>();
+  for (const msg of latestMessages ?? []) {
+    if (!latestMessageMap.has(msg.conversation_id)) {
+      latestMessageMap.set(msg.conversation_id, msg);
+    }
+  }
+
+  // Fetch sender profiles for the latest messages
+  const senderIds = [
+    ...new Set(
+      Array.from(latestMessageMap.values()).map((m) => m.sender_id)
+    ),
+  ];
+
+  const { data: profiles } = senderIds.length
+    ? await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", senderIds)
+        .returns<SenderProfile[]>()
+    : { data: [] as SenderProfile[] };
+
+  const profileMap = new Map(
+    (profiles ?? []).map((p) => [p.id, p.full_name])
+  );
+
+  // Group by property, keeping only the latest conversation per property
+  const propertyMap = new Map<
+    string,
+    {
+      propertyName: string;
+      conversations: {
+        id: string;
+        topic: string;
+        status: string;
+        updatedAt: string;
+        lastMessageBody: string | null;
+        lastMessageSender: string | null;
+        lastMessageTime: string | null;
+      }[];
+    }
+  >();
+
+  // Sort conversations by updated_at descending
+  const sorted = [...conversations].sort(
+    (a, b) =>
+      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
+
+  for (const convo of sorted) {
+    const key = convo.property_id ?? "__general__";
+    const propName = convo.property?.name ?? "General";
+
+    if (!propertyMap.has(key)) {
+      propertyMap.set(key, { propertyName: propName, conversations: [] });
+    }
+
+    const latestMsg = latestMessageMap.get(convo.id);
+
+    propertyMap.get(key)!.conversations.push({
+      id: convo.id,
+      topic: convo.topic,
+      status: convo.status,
+      updatedAt: convo.updated_at,
+      lastMessageBody: latestMsg?.body ?? null,
+      lastMessageSender: latestMsg
+        ? (profileMap.get(latestMsg.sender_id) ?? "Unknown")
+        : null,
+      lastMessageTime: latestMsg?.created_at ?? null,
+    });
+  }
+
+  const propertyGroups = Array.from(propertyMap.entries());
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="px-6 py-4">
-        <h1 className="text-[20px] font-bold text-[#222222]">
-          Messages <span className="font-normal text-[#717171]">· {convos.length}</span>
+    <div className="bg-white min-h-screen pb-28">
+      <div className="px-6 pt-8 pb-4">
+        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+          Messages
         </h1>
       </div>
 
-      {!convos.length ? (
-        <div className="flex items-center justify-center py-16">
-          <p className="text-sm text-[#717171]">No active threads</p>
+      {!conversations.length ? (
+        <div className="px-6 py-16 text-center">
+          <p className="text-sm text-[#717171]">No threads</p>
         </div>
       ) : (
-        convos.map((convo) => (
-          <Link
-            key={convo.id}
-            href={`/dashboard/messages/${convo.id}`}
-            className="block mx-6 mb-3 px-5 py-4 rounded-xl border border-[#EBEBEB] card-press transition-colors"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-bold text-[#222222] truncate">{convo.topic}</p>
-              <span
-                className={`text-xs px-2.5 py-0.5 rounded-full shrink-0 ${
-                  convo.status === "open"
-                    ? "bg-[#00A699]/10 text-[#00A699]"
-                    : "bg-[#F7F7F7] text-[#717171]"
-                }`}
-              >
-                {convo.status === "open" ? "Open" : "Closed"}
-              </span>
-            </div>
-            <p className="text-xs text-[#717171] mt-1">
-              {convo.property?.name ?? "General"}
-            </p>
-          </Link>
-        ))
+        <div className="space-y-6">
+          {propertyGroups.map(
+            ([propertyId, { propertyName, conversations }]) => (
+              <PropertyMessageGroup
+                key={propertyId}
+                propertyName={propertyName}
+                conversations={conversations}
+              />
+            )
+          )}
+        </div>
       )}
     </div>
   );

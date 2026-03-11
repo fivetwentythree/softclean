@@ -28,7 +28,7 @@ const statusLabel: Record<string, string> = {
   unassigned: "Unassigned",
   assigned: "Assigned",
   in_progress: "In progress",
-  completed: "Completed",
+  completed: "Cleaned",
   issue_reported: "Issue reported",
 };
 
@@ -144,7 +144,7 @@ export default async function TaskDetailPage({
           )}
           {task.completed_at && (
             <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Completed at:</span>{" "}
+              <span className="text-[#717171]">Cleaned at:</span>{" "}
               {formatDateTime(task.completed_at)}
             </p>
           )}

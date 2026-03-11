@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { NotificationStack } from "@/components/notification-stack";
 
 type TaskRow = {
   id: string;
@@ -17,6 +18,20 @@ const statusColor: Record<string, string> = {
   completed: "#DDDDDD",
   issue_reported: "#FF385C",
 };
+
+const daysUntil = (dateStr: string) => {
+  const today = new Date();
+  const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const target = new Date(dateStr + "T00:00:00");
+  const diffMs = target.getTime() - base.getTime();
+  return Math.max(0, Math.round(diffMs / (1000 * 60 * 60 * 24)));
+};
+
+const formatShortDate = (dateStr: string) =>
+  new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+  });
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -63,17 +78,44 @@ export default async function DashboardPage() {
     <div className="bg-white min-h-screen">
       {/* Low stock alerts */}
       {lowStock.length > 0 && (
-        <div className="px-6 pt-4 space-y-2">
-          {lowStock.map((s, i) => (
-            <div
-              key={i}
-              className="bg-[#FFF0F0] rounded-xl border-l-4 border-[#FF385C] px-4 py-3"
-            >
-              <span className="text-sm text-[#FF385C]">
-                ⚠ {s.item?.name} at {s.property?.name} — {s.current_quantity} left
+        <div className="pt-4">
+          <NotificationStack
+            header={
+              <span className="text-sm font-bold text-[#FF385C]">
+                Low stock · {lowStock.length}
               </span>
-            </div>
-          ))}
+            }
+          >
+            {lowStock.map((s, i) => (
+              <div
+                key={i}
+                className="mx-6 flex items-center gap-3 px-5 py-4"
+                style={{
+                  borderRadius: 22,
+                  background: "rgba(255, 255, 255, 0.82)",
+                  backdropFilter: "blur(40px) saturate(1.8)",
+                  border: "1px solid rgba(255, 255, 255, 0.6)",
+                  boxShadow:
+                    "0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+                }}
+              >
+                <span
+                  className="shrink-0 flex items-center justify-center text-xs font-bold text-white"
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 9,
+                    backgroundColor: "#FF385C",
+                  }}
+                >
+                  !
+                </span>
+                <span className="text-sm font-medium text-[#222222]">
+                  {s.item?.name} at {s.property?.name} — {s.current_quantity} left
+                </span>
+              </div>
+            ))}
+          </NotificationStack>
         </div>
       )}
 
@@ -126,20 +168,29 @@ export default async function DashboardPage() {
       {/* Coming up */}
       {upcoming && upcoming.length > 0 && (
         <div className="px-6 pt-2 pb-6">
-          <h3 className="text-lg font-bold text-[#222222] mb-3">Coming up</h3>
-          <div className="space-y-1">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-[#222222]">Coming up</h3>
+            <Link
+              href="/dashboard/tasks"
+              className="text-sm font-medium text-[#007AFF]"
+            >
+              All tasks
+            </Link>
+          </div>
+          <div className="space-y-2">
             {upcoming.map((task) => (
               <Link
                 key={task.id}
                 href={`/dashboard/tasks/${task.id}`}
-                className="card-press flex items-center gap-3 rounded-xl px-4 py-3.5 border-b border-[#EBEBEB] active:bg-[#F7F7F7] transition-colors"
+                className="card-press flex items-center gap-3 rounded-[18px] px-4 py-3.5 border border-[#EBEBEB] bg-white active:bg-[#F7F7F7] transition-colors"
               >
-                <span
-                  className="shrink-0 block w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: statusColor[task.status] ?? "#B0B0B0" }}
-                />
                 <p className="flex-1 text-sm font-medium text-[#222222]">{task.property?.name}</p>
-                <span className="text-xs text-[#717171]">{task.scheduled_date}</span>
+                <span className="text-xs text-[#8e8e93]">
+                  {formatShortDate(task.scheduled_date)}
+                </span>
+                <span className="text-xs font-semibold text-[#007AFF] bg-[#007AFF]/10 rounded-full px-2 py-0.5">
+                  in {daysUntil(task.scheduled_date)} days
+                </span>
               </Link>
             ))}
           </div>

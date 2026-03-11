@@ -373,6 +373,7 @@ export type Database = {
         Row: {
           id: string;
           property_id: string | null;
+          booking_id: string | null;
           topic: string;
           status: "open" | "resolved";
           created_at: string;
@@ -381,6 +382,7 @@ export type Database = {
         Insert: {
           id?: string;
           property_id?: string | null;
+          booking_id?: string | null;
           topic: string;
           status?: "open" | "resolved";
           created_at?: string;
@@ -389,6 +391,7 @@ export type Database = {
         Update: {
           id?: string;
           property_id?: string | null;
+          booking_id?: string | null;
           topic?: string;
           status?: "open" | "resolved";
           created_at?: string;
