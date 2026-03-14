@@ -50,8 +50,8 @@ function AddItemModal({
     "consumable" | "linen" | "maintenance" | "amenity"
   >("consumable");
   const [unit, setUnit] = useState("units");
-  const [quantity, setQuantity] = useState(0);
-  const [threshold, setThreshold] = useState(2);
+  const [quantity, setQuantity] = useState("");
+  const [threshold, setThreshold] = useState("2");
   const [selectedProperties, setSelectedProperties] = useState<string[]>(
     properties.map((p) => p.id)
   );
@@ -77,8 +77,8 @@ function AddItemModal({
         name: name.trim(),
         category,
         unit,
-        initialQuantity: quantity,
-        minimumThreshold: threshold,
+        initialQuantity: quantity === "" ? 0 : Number(quantity),
+        minimumThreshold: threshold === "" ? 0 : Number(threshold),
         propertyIds: selectedProperties,
       });
       if (result.error) {
@@ -90,13 +90,16 @@ function AddItemModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center">
       <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-t-[14px] px-6 pt-5 pb-10 safe-bottom animate-in slide-in-from-bottom duration-300">
-        <div className="flex items-center justify-between mb-5">
+      <div
+        className="relative w-[calc(100%-24px)] max-w-lg bg-white px-7 pt-6 animate-in slide-in-from-bottom-12 duration-500"
+        style={{ maxHeight: "85dvh", display: "flex", flexDirection: "column", borderRadius: 30, marginBottom: 12, boxShadow: "0 24px 80px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.05)", animationTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+      >
+        <div className="flex items-center justify-between mb-5 shrink-0">
           <h2 className="text-[19px] font-bold text-[#000000]">
             Add stock item
           </h2>
@@ -110,7 +113,7 @@ function AddItemModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1 pb-10">
           <div>
             <label className="text-[13px] font-medium mb-1 block" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
               Name
@@ -160,10 +163,12 @@ function AddItemModal({
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 min={0}
                 value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full rounded-xl border border-[#EBEBEB] px-4 py-3 text-[15px] text-[#1a1a1a] outline-none focus:border-[#007AFF] transition-colors"
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="0"
+                className="w-full rounded-xl border border-[#EBEBEB] px-4 py-3 text-[15px] text-[#1a1a1a] placeholder:text-[#C7C7CC] outline-none focus:border-[#007AFF] transition-colors"
               />
             </div>
             <div className="flex-1">
@@ -172,10 +177,12 @@ function AddItemModal({
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 min={0}
                 value={threshold}
-                onChange={(e) => setThreshold(Number(e.target.value))}
-                className="w-full rounded-xl border border-[#EBEBEB] px-4 py-3 text-[15px] text-[#1a1a1a] outline-none focus:border-[#007AFF] transition-colors"
+                onChange={(e) => setThreshold(e.target.value)}
+                placeholder="0"
+                className="w-full rounded-xl border border-[#EBEBEB] px-4 py-3 text-[15px] text-[#1a1a1a] placeholder:text-[#C7C7CC] outline-none focus:border-[#007AFF] transition-colors"
               />
             </div>
           </div>

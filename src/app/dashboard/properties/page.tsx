@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Database } from "@/lib/types/database";
+import { AddPropertyButton } from "./property-form-sheet";
 
 type Property = Database["public"]["Tables"]["properties"]["Row"];
 export default async function PropertiesPage() {
@@ -14,10 +15,11 @@ export default async function PropertiesPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <div className="px-6 pt-8 pb-4">
+      <div className="px-6 pt-8 pb-4 flex items-center justify-between">
         <h1 className="text-[22px] font-bold tracking-tight text-[#000000]">
           Your sites
         </h1>
+        <AddPropertyButton />
       </div>
 
       {!properties?.length ? (

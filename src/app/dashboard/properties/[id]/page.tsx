@@ -5,6 +5,7 @@ import type { Database } from "@/lib/types/database";
 import { DatePicker } from "./date-picker";
 import { NotificationStack } from "@/components/notification-stack";
 import { StockStepper } from "@/components/stock-stepper";
+import { EditPropertyButton } from "../property-form-sheet";
 
 type Property = Database["public"]["Tables"]["properties"]["Row"];
 type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
@@ -225,6 +226,7 @@ export default async function PropertyDetailPage({
             <h1 className="text-[22px] font-bold text-[#000000]">{property.name}</h1>
             <p className="text-[15px] mt-1" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{property.address}</p>
           </div>
+          <EditPropertyButton property={property} />
         </div>
         {property.access_instructions && (
           <p className="text-[15px] mt-3 leading-relaxed" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
