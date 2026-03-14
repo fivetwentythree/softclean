@@ -89,10 +89,7 @@ const formatShortDate = (value: string) =>
 const formatDateRange = (start: string, end: string) =>
   `${formatShortDate(start)} – ${formatShortDate(end)}`;
 
-const formatBookingTopic = (topic: string) => {
-  if (!topic.startsWith("Booking ")) return topic;
-  return topic.replace(/(\d{4})-(\d{2})-(\d{2})/g, "$1/$2/$3");
-};
+import { formatBookingTopic } from "@/lib/format-topic";
 
 const glassStyle = {
   borderRadius: 14,

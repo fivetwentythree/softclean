@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import { AttachmentSheet } from "./attachment-sheet";
+import { formatBookingTopic } from "@/lib/format-topic";
 
 type Message = {
   id: string;
@@ -206,11 +207,6 @@ export default function ConversationPage() {
 
   function isImageUrl(url: string) {
     return /\.(jpg|jpeg|png|gif|webp|heic|heif)(\?|$)/i.test(url);
-  }
-
-  function formatBookingTopic(topic: string) {
-    if (!topic.startsWith("Booking ")) return topic;
-    return topic.replace(/(\d{4})-(\d{2})-(\d{2})/g, "$1/$2/$3");
   }
 
   // Group messages by date

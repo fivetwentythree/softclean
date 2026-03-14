@@ -19,12 +19,14 @@ const statusColor: Record<string, string> = {
   issue_reported: "#FF3B30",
 };
 
-const daysUntil = (dateStr: string) => {
+const daysUntilLabel = (dateStr: string) => {
   const today = new Date();
   const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const target = new Date(dateStr + "T00:00:00");
-  const diffMs = target.getTime() - base.getTime();
-  return Math.max(0, Math.round(diffMs / (1000 * 60 * 60 * 24)));
+  const diff = Math.max(0, Math.round((target.getTime() - base.getTime()) / (1000 * 60 * 60 * 24)));
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Tomorrow";
+  return `in ${diff} days`;
 };
 
 const formatShortDate = (dateStr: string) =>
@@ -277,7 +279,7 @@ export default async function DashboardPage() {
                     padding: "3px 10px",
                   }}
                 >
-                  in {daysUntil(task.scheduled_date)} days
+                  {daysUntilLabel(task.scheduled_date)}
                 </span>
               </Link>
             ))}
