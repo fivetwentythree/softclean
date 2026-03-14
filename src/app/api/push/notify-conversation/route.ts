@@ -1,13 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 function getWebPush() {
-  webpush.setVapidDetails(
-    "mailto:" + process.env.VAPID_EMAIL!,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-  );
+  const email = process.env.VAPID_EMAIL;
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+
+  if (!email || !publicKey || !privateKey) {
+    throw new Error("Missing VAPID configuration.");
+  }
+
+  webpush.setVapidDetails(`mailto:${email}`, publicKey, privateKey);
   return webpush;
 }
 
@@ -25,6 +30,13 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }
 
   const { conversationId, messageBody } = await request.json();
@@ -93,11 +105,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Get push subscriptions for all recipients
-  const { data: subscriptions } = await supabase
+  const { data: subscriptions, error: subscriptionsError } = await admin
     .from("push_subscriptions")
     .select("id, user_id, endpoint, p256dh, auth")
     .in("user_id", [...recipientIds])
     .returns<PushSubscriptionRow[]>();
+
+  if (subscriptionsError) {
+    return NextResponse.json({ error: subscriptionsError.message }, { status: 500 });
+  }
 
   if (!subscriptions?.length) {
     return NextResponse.json({ sent: 0 });
@@ -118,7 +134,12 @@ export async function POST(request: NextRequest) {
     tag: `msg-${conversationId}`,
   });
 
-  const wp = getWebPush();
+  let wp: typeof webpush;
+  try {
+    wp = getWebPush();
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 
   const results = await Promise.allSettled(
     subscriptions.map(async (sub) => {
@@ -133,7 +154,7 @@ export async function POST(request: NextRequest) {
       } catch (err: unknown) {
         const statusCode = (err as { statusCode?: number }).statusCode;
         if (statusCode === 410 || statusCode === 404) {
-          await supabase
+          await admin
             .from("push_subscriptions")
             .delete()
             .eq("id", sub.id);

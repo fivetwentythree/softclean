@@ -1,13 +1,17 @@
-import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 function getWebPush() {
-  webpush.setVapidDetails(
-    "mailto:" + process.env.VAPID_EMAIL!,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-  );
+  const email = process.env.VAPID_EMAIL;
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+
+  if (!email || !publicKey || !privateKey) {
+    throw new Error("Missing VAPID configuration.");
+  }
+
+  webpush.setVapidDetails(`mailto:${email}`, publicKey, privateKey);
   return webpush;
 }
 
@@ -24,13 +28,25 @@ export async function POST(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!serviceRoleKey || authHeader !== `Bearer ${serviceRoleKey}`) {
+  if (!serviceRoleKey) {
+    return NextResponse.json(
+      { error: "Missing SUPABASE_SERVICE_ROLE_KEY" },
+      { status: 500 }
+    );
+  }
+
+  if (authHeader !== `Bearer ${serviceRoleKey}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { userId, title, body, url, excludeSenderId } = await request.json();
 
-  const supabase = await createClient();
+  let supabase: ReturnType<typeof createAdminClient>;
+  try {
+    supabase = createAdminClient();
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 
   // Get subscriptions for target user(s)
   let query = supabase
@@ -42,7 +58,15 @@ export async function POST(request: NextRequest) {
     query = query.eq("user_id", userId);
   }
 
-  const { data: subscriptions } = await query.returns<PushSubscriptionRow[]>();
+  const { data: subscriptions, error: subscriptionsError } =
+    await query.returns<PushSubscriptionRow[]>();
+
+  if (subscriptionsError) {
+    return NextResponse.json(
+      { error: subscriptionsError.message },
+      { status: 500 }
+    );
+  }
 
   if (!subscriptions?.length) {
     return NextResponse.json({ sent: 0 });
@@ -61,7 +85,12 @@ export async function POST(request: NextRequest) {
     badge: "/icons/icon-192x192.png",
   });
 
-  const wp = getWebPush();
+  let wp: typeof webpush;
+  try {
+    wp = getWebPush();
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 
   const results = await Promise.allSettled(
     targets.map(async (sub) => {
