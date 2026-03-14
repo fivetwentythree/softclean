@@ -104,20 +104,24 @@ input, textarea, button, select {
 }
 
 /* View Transition — iOS-style slide */
-::view-transition-old(page) {
-  animation: slide-out-left 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-::view-transition-new(page) {
-  animation: slide-in-right 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+::view-transition-image-pair(page) {
+  isolation: auto;
 }
 
-@keyframes slide-out-left {
-  from { transform: translateX(0); opacity: 1; }
-  to   { transform: translateX(-30%); opacity: 0.6; }
+::view-transition-old(page) {
+  animation: vt-fade-out 0.2s ease forwards;
 }
-@keyframes slide-in-right {
-  from { transform: translateX(30%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
+::view-transition-new(page) {
+  animation: vt-slide-in 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes vt-slide-in {
+  from { transform: translate3d(8%, 0, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
 }
 
 /* Pull-to-refresh overscroll indicator */
