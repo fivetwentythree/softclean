@@ -17,11 +17,11 @@ type Task = {
 };
 
 const statusColor: Record<string, string> = {
-  unassigned: "#B0B0B0",
-  assigned: "#FFB400",
-  in_progress: "#00A699",
-  completed: "#DDDDDD",
-  issue_reported: "#FF385C",
+  unassigned: "#8E8E93",
+  assigned: "#FF9500",
+  in_progress: "#34C759",
+  completed: "#C7C7CC",
+  issue_reported: "#FF3B30",
 };
 
 const statusLabel: Record<string, string> = {
@@ -86,37 +86,37 @@ export default async function TaskDetailPage({
 
   if (!task) notFound();
 
-  const color = statusColor[task.status] ?? "#B0B0B0";
+  const color = statusColor[task.status] ?? "#8E8E93";
   const userRole = profile?.role ?? "cleaner";
 
   return (
-    <div className="bg-white min-h-screen px-6 py-6 space-y-6">
+    <div className="min-h-screen px-5 py-6 space-y-5">
       {/* Back link */}
       <Link
         href="/dashboard/tasks"
-        className="text-sm text-[#717171] hover:text-[#222222] transition-colors"
+        className="text-sm text-[#007AFF] hover:text-[#0056B3] transition-colors"
       >
         ← Back to tasks
       </Link>
 
       {/* Property header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#222222]">
+        <h1 className="text-[28px] font-bold text-[#000000] leading-tight">
           {task.property?.name ?? "—"}
         </h1>
         {task.property?.address && (
-          <p className="text-sm text-[#717171] mt-1">{task.property.address}</p>
+          <p className="text-sm mt-1" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{task.property.address}</p>
         )}
       </div>
 
       {/* Status card */}
       <div
-        className="rounded-2xl p-5 space-y-3"
-        style={{ boxShadow: "0 3px 10px rgba(0,0,0,0.1)" }}
+        className="rounded-[14px] bg-white p-5 space-y-3"
+        style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)" }}
       >
         <div className="flex items-center justify-between">
           <span
-            className="text-xs font-semibold px-3 py-1 rounded-full"
+            className="text-[12px] font-semibold px-3 py-1 rounded-full"
             style={{
               backgroundColor: `${color}1A`,
               color: color,
@@ -125,26 +125,26 @@ export default async function TaskDetailPage({
             {statusLabel[task.status] ?? task.status.replace("_", " ")}
           </span>
           {task.estimated_duration_minutes && (
-            <span className="text-xs text-[#717171]">
+            <span className="text-xs" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
               ~{task.estimated_duration_minutes} min
             </span>
           )}
         </div>
 
         <div className="space-y-1">
-          <p className="text-sm text-[#222222]">
-            <span className="text-[#717171]">Scheduled:</span>{" "}
+          <p className="text-sm text-[#000000]">
+            <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Scheduled:</span>{" "}
             {formatDate(task.scheduled_date)}
           </p>
           {task.started_at && (
-            <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Started at:</span>{" "}
+            <p className="text-sm text-[#000000]">
+              <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Started at:</span>{" "}
               {formatDateTime(task.started_at)}
             </p>
           )}
           {task.completed_at && (
-            <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Cleaned at:</span>{" "}
+            <p className="text-sm text-[#000000]">
+              <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Cleaned at:</span>{" "}
               {formatDateTime(task.completed_at)}
             </p>
           )}
@@ -153,11 +153,11 @@ export default async function TaskDetailPage({
 
       {/* Access instructions */}
       {task.property?.access_instructions && (
-        <div className="rounded-xl bg-[#F7F7F7] p-5">
-          <p className="text-xs font-semibold text-[#717171] uppercase tracking-wide mb-2">
+        <div className="rounded-[14px] bg-white p-5">
+          <p className="text-[13px] font-semibold uppercase tracking-wide mb-2" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Access instructions
           </p>
-          <p className="text-sm text-[#222222] leading-relaxed">
+          <p className="text-sm text-[#000000] leading-relaxed">
             {task.property.access_instructions}
           </p>
         </div>
@@ -165,44 +165,44 @@ export default async function TaskDetailPage({
 
       {/* Notes */}
       {task.notes && (
-        <div className="rounded-xl bg-[#F7F7F7] p-5">
-          <p className="text-xs font-semibold text-[#717171] uppercase tracking-wide mb-2">
+        <div className="rounded-[14px] bg-white p-5">
+          <p className="text-[13px] font-semibold uppercase tracking-wide mb-2" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Notes
           </p>
-          <p className="text-sm text-[#222222] leading-relaxed">{task.notes}</p>
+          <p className="text-sm text-[#000000] leading-relaxed">{task.notes}</p>
         </div>
       )}
 
       {/* Cleaner info */}
       {task.cleaner && (
-        <div className="rounded-xl bg-[#F7F7F7] p-5">
-          <p className="text-xs font-semibold text-[#717171] uppercase tracking-wide mb-2">
+        <div className="rounded-[14px] bg-white p-5">
+          <p className="text-[13px] font-semibold uppercase tracking-wide mb-2" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Cleaner
           </p>
-          <p className="text-sm text-[#222222]">{task.cleaner.full_name}</p>
+          <p className="text-sm text-[#000000]">{task.cleaner.full_name}</p>
           {task.cleaner.phone && (
-            <p className="text-sm text-[#717171] mt-1">{task.cleaner.phone}</p>
+            <p className="text-sm mt-1" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{task.cleaner.phone}</p>
           )}
         </div>
       )}
 
       {/* Booking info */}
       {task.booking && (
-        <div className="rounded-xl bg-[#F7F7F7] p-5">
-          <p className="text-xs font-semibold text-[#717171] uppercase tracking-wide mb-2">
+        <div className="rounded-[14px] bg-white p-5">
+          <p className="text-[13px] font-semibold uppercase tracking-wide mb-2" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Booking
           </p>
           <div className="space-y-1">
-            <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Check-in:</span>{" "}
+            <p className="text-sm text-[#000000]">
+              <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Check-in:</span>{" "}
               {formatDateTime(task.booking.check_in_at)}
             </p>
-            <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Check-out:</span>{" "}
+            <p className="text-sm text-[#000000]">
+              <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Check-out:</span>{" "}
               {formatDateTime(task.booking.check_out_at)}
             </p>
-            <p className="text-sm text-[#222222]">
-              <span className="text-[#717171]">Guests:</span>{" "}
+            <p className="text-sm text-[#000000]">
+              <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>Guests:</span>{" "}
               {task.booking.guest_count}
             </p>
           </div>

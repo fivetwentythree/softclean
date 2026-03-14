@@ -31,17 +31,17 @@ export function PropertyStockGroup({
     <div>
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between px-6 py-3 active:bg-[#F7F7F7] transition-colors"
+        className="w-full flex items-center justify-between px-6 py-3 active:bg-[#E5E5EA] transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-[15px] font-semibold text-[#1a1a1a]">
+          <span className="text-[15px] font-semibold text-[#000000]">
             {propertyName}
           </span>
-          <span className="text-[13px] text-[#8e8e93]">
+          <span className="text-[13px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             {items.length} item{items.length !== 1 ? "s" : ""}
           </span>
           {criticalCount > 0 && (
-            <span className="text-[11px] font-semibold text-[#FF385C] bg-[#FF385C]/10 rounded-full px-2 py-0.5">
+            <span className="text-[11px] font-semibold text-[#FF3B30] bg-[#FF3B30]/10 rounded-full px-2 py-0.5">
               {criticalCount} low
             </span>
           )}
@@ -71,7 +71,7 @@ export function PropertyStockGroup({
         <div className="px-6 pb-2 space-y-2.5">
           {items.map((inv) => {
             const isCritical = inv.quantity <= inv.threshold;
-            const barColor = isCritical ? "#FF385C" : "#00A699";
+            const barColor = isCritical ? "#FF3B30" : "#34C759";
 
             return (
               <SwipeToDeleteRow
@@ -80,18 +80,18 @@ export function PropertyStockGroup({
                 itemId={inv.itemId}
                 itemName={inv.itemName}
               >
-                <div className="flex items-center justify-between rounded-[18px] px-4 py-3.5 border border-[#EBEBEB] bg-white">
+                <div className="flex items-center justify-between rounded-[14px] px-4 py-3.5 bg-white" style={{ boxShadow: "0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)" }}>
                   <div className="flex items-center gap-3 min-w-0">
                     <span
                       className="shrink-0 self-stretch rounded-full"
                       style={{ width: 3, backgroundColor: barColor }}
                     />
                     <div className="min-w-0">
-                      <p className="text-[15px] font-medium text-[#1a1a1a] truncate">
+                      <p className="text-[15px] font-medium text-[#000000] truncate">
                         {inv.itemName}
                       </p>
                       {isCritical && (
-                        <p className="text-[12px] text-[#8e8e93] mt-0.5">
+                        <p className="text-[12px] mt-0.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                           min {inv.threshold} {inv.unit}
                         </p>
                       )}

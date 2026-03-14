@@ -14,10 +14,10 @@ type OrderRow = {
 };
 
 const statusColor: Record<string, string> = {
-  pending: "#FFB400",
-  dispatched: "#717171",
-  delivered: "#00A699",
-  disputed: "#FF385C",
+  pending: "#FF9500",
+  dispatched: "#8E8E93",
+  delivered: "#34C759",
+  disputed: "#FF3B30",
 };
 
 export default async function OrdersPage() {
@@ -40,32 +40,33 @@ export default async function OrdersPage() {
     .returns<OrderRow[]>();
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="px-6 py-4">
-        <span className="text-[20px] font-bold text-[#222222]">
+    <div className="min-h-screen pb-28">
+      <div className="px-6 pt-8 pb-4">
+        <h1 className="text-[22px] font-bold text-[#000000]">
           Orders{" "}
-          <span className="text-[#717171] font-normal">{orders?.length ?? 0}</span>
-        </span>
+          <span className="font-normal" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{orders?.length ?? 0}</span>
+        </h1>
       </div>
 
       {!orders?.length ? (
         <div className="flex items-center justify-center py-20">
-          <p className="text-sm text-[#717171]">No orders</p>
+          <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>No orders</p>
         </div>
       ) : (
         orders.map((order) => {
-          const color = statusColor[order.status] ?? "#717171";
+          const color = statusColor[order.status] ?? "#8E8E93";
           return (
             <div
               key={order.id}
-              className="mx-6 mb-3 rounded-xl border border-[#EBEBEB] px-5 py-4"
+              className="mx-6 mb-3 rounded-[14px] px-5 py-4 bg-white"
+              style={{ boxShadow: "0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)" }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-bold text-[#222222]">
+                  <p className="text-sm font-bold text-[#000000]">
                     {order.property?.name}
                   </p>
-                  <p className="text-xs text-[#717171] mt-0.5">
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                     {new Date(order.order_date).toLocaleDateString()}
                   </p>
                 </div>
@@ -80,18 +81,18 @@ export default async function OrdersPage() {
                 </span>
               </div>
               {order.items?.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-[#EBEBEB] space-y-1.5">
+                <div className="mt-3 pt-3 space-y-1.5" style={{ borderTop: "0.5px solid rgba(0,0,0,0.08)" }}>
                   {order.items.map((line, i) => (
                     <div
                       key={i}
                       className="flex items-center justify-between text-sm"
                     >
-                      <span className="text-[#222222]">{line.item?.name}</span>
-                      <span className="text-[#717171]">
+                      <span className="text-[#000000]">{line.item?.name}</span>
+                      <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {line.quantity_requested} {line.item?.unit}
                         {line.quantity_delivered != null &&
                           line.quantity_delivered > 0 && (
-                            <span className="text-[#00A699] ml-2">
+                            <span className="text-[#34C759] ml-2">
                               ✓ {line.quantity_delivered}
                             </span>
                           )}

@@ -1,22 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F7F7F7;
-  --bg-tertiary: #EBEBEB;
-  --border: #EBEBEB;
-  --text-primary: #222222;
-  --text-secondary: #717171;
-  --text-muted: #B0B0B0;
-  --accent: #FF385C;
-  --accent-green: #00A699;
-  --accent-amber: #FFB400;
-  --accent-red: #FF385C;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
-  --shadow-md: 0 3px 10px rgba(0,0,0,0.1);
-  --shadow-lg: 0 6px 20px rgba(0,0,0,0.12);
-  --radius-sm: 12px;
-  --radius-md: 16px;
+  /* iOS 26 System Colors */
+  --system-blue: #007AFF;
+  --system-green: #34C759;
+  --system-red: #FF3B30;
+  --system-orange: #FF9500;
+  --system-yellow: #FFCC00;
+  --system-teal: #30B0C7;
+  
+  /* Grays (iOS Light) */
+  --label: #000000;
+  --label-secondary: #3C3C43;
+  --label-tertiary: rgba(60, 60, 67, 0.3);
+  --label-quaternary: rgba(60, 60, 67, 0.18);
+  
+  /* Backgrounds (iOS Grouped) */
+  --system-bg: #F2F2F7;
+  --system-bg-secondary: #FFFFFF;
+  --system-bg-tertiary: #F2F2F7;
+  
+  /* Fills */
+  --fill: rgba(120, 120, 128, 0.2);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+  --fill-tertiary: rgba(120, 120, 128, 0.12);
+  --fill-quaternary: rgba(120, 120, 128, 0.08);
+  
+  /* Separators */
+  --separator: rgba(60, 60, 67, 0.36);
+  --separator-opaque: #C6C6C8;
+  
+  /* Liquid Glass */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 2px 16px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.12);
+  
+  /* Legacy compat */
+  --accent: #007AFF;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
 }
 
@@ -25,14 +48,16 @@
 }
 
 body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--system-bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
 }
 
-input, textarea, button {
-  border-radius: var(--radius-sm);
+input, textarea, button, select {
+  font-family: inherit;
 }
 
 @layer utilities {
@@ -40,18 +65,33 @@ input, textarea, button {
     padding-bottom: env(safe-area-inset-bottom);
   }
   .touch-target {
-    min-height: 48px;
+    min-height: 44px;
   }
   .label {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--text-secondary);
+    letter-spacing: -0.01em;
+    color: var(--label-secondary);
   }
   .card-press {
-    transition: transform 0.15s ease;
+    transition: transform 0.12s ease, opacity 0.12s ease;
   }
   .card-press:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(1.8);
+    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+    border: 0.5px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(50px) saturate(2);
+    -webkit-backdrop-filter: blur(50px) saturate(2);
+    border: 0.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.1);
   }
 }

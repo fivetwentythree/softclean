@@ -128,16 +128,16 @@ export default async function MessagesPage() {
   const propertyGroups = Array.from(propertyMap.entries());
 
   return (
-    <div className="bg-white min-h-screen pb-28">
+    <div className="min-h-screen pb-28">
       <div className="px-6 pt-8 pb-4">
-        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+        <h1 className="text-[22px] font-bold tracking-tight text-[#000000]">
           Messages
         </h1>
       </div>
 
       {!conversations.length ? (
         <div className="px-6 py-16 text-center">
-          <p className="text-sm text-[#717171]">No threads</p>
+          <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>No threads</p>
         </div>
       ) : (
         <div className="space-y-6">

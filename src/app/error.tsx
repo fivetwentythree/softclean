@@ -17,7 +17,7 @@ export default function GlobalError({
         <p className="text-sm text-[#717171]">{error.message}</p>
         <button
           onClick={reset}
-          className="rounded-full bg-[#FF385C] text-white font-semibold px-6 py-3 text-sm"
+          className="rounded-full bg-[#007AFF] text-white font-semibold px-6 py-3 text-sm"
         >
           Try again
         </button>

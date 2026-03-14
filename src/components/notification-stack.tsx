@@ -44,7 +44,7 @@ export function NotificationStack({ children, header }: NotificationStackProps) 
             transition: "transform 0.25s ease",
           }}
         >
-          <path d="M3 4.5L6 7.5L9 4.5" stroke="#717171" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="rgba(60,60,67,0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
     </div>
@@ -77,7 +77,7 @@ export function NotificationStack({ children, header }: NotificationStackProps) 
         {/* Peeking slivers — click these to expand */}
         {Array.from({ length: maxPeek }, (_, i) => {
           const layer = i + 1;
-          const bg = layer === 1 ? "#ECECEC" : "#E2E2E2";
+          const bg = layer === 1 ? "#E5E5EA" : "#D1D1D6";
           return (
             <div
               key={layer}
@@ -88,7 +88,7 @@ export function NotificationStack({ children, header }: NotificationStackProps) 
               style={{
                 top: layer * peekPerCard,
                 height: frontHeight || 68,
-                borderRadius: 22,
+                borderRadius: 14,
                 background: bg,
                 zIndex: maxPeek - i,
               }}

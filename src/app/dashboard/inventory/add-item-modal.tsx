@@ -95,9 +95,9 @@ function AddItemModal({
         className="absolute inset-0 bg-black/30 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-t-[22px] px-6 pt-5 pb-10 safe-bottom animate-in slide-in-from-bottom duration-300">
+      <div className="relative w-full max-w-lg bg-white rounded-t-[14px] px-6 pt-5 pb-10 safe-bottom animate-in slide-in-from-bottom duration-300">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[19px] font-bold text-[#1a1a1a]">
+          <h2 className="text-[19px] font-bold text-[#000000]">
             Add stock item
           </h2>
           <button
@@ -112,14 +112,14 @@ function AddItemModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-[13px] font-medium text-[#8e8e93] mb-1 block">
+            <label className="text-[13px] font-medium mb-1 block" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
               Name
             </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Detergent"
-              className="w-full rounded-xl border border-[#EBEBEB] px-4 py-3 text-[15px] text-[#1a1a1a] placeholder:text-[#B0B0B0] outline-none focus:border-[#007AFF] transition-colors"
+              className="w-full rounded-xl border border-[#D1D1D6] px-4 py-3 text-[15px] text-[#000000] placeholder:text-[#C7C7CC] outline-none focus:border-[#007AFF] transition-colors"
             />
           </div>
 
@@ -224,7 +224,7 @@ function AddItemModal({
           </div>
 
           {error && (
-            <p className="text-[13px] text-[#FF385C]">{error}</p>
+            <p className="text-[13px] text-[#FF3B30]">{error}</p>
           )}
 
           <button

@@ -13,51 +13,55 @@ export default async function PropertiesPage() {
     .returns<Property[]>();
 
   return (
-    <div className="bg-white min-h-screen pb-28">
+    <div className="min-h-screen pb-28">
       <div className="px-6 pt-8 pb-4">
-        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+        <h1 className="text-[22px] font-bold tracking-tight text-[#000000]">
           Your sites
         </h1>
       </div>
 
       {!properties?.length ? (
         <div
-          className="mx-6 mt-2 rounded-[22px] px-6 py-20 text-center backdrop-blur-2xl"
+          className="mx-6 mt-2 rounded-[14px] px-6 py-20 text-center bg-white"
           style={{
-            background: "rgba(255, 255, 255, 0.55)",
-            boxShadow:
-              "0 0 0 0.5px rgba(255,255,255,0.6) inset, 0 2px 12px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04)",
+            boxShadow: "0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)",
           }}
         >
-          <p className="text-[15px] text-[#8e8e93]">No sites registered</p>
+          <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>No sites registered</p>
         </div>
       ) : (
-        <div className="px-6 mt-1 space-y-3">
-          {properties.map((property) => {
-            return (
-              <Link
-                key={property.id}
-                href={`/dashboard/properties/${property.id}`}
-                className="card-press block rounded-[22px] px-5 py-[18px] backdrop-blur-2xl"
-                style={{
-                  background: "rgba(255, 255, 255, 0.55)",
-                  boxShadow:
-                    "0 0 0 0.5px rgba(255,255,255,0.6) inset, 0 2px 12px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04)",
-                }}
-              >
-                <div className="flex items-start">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[17px] font-semibold text-[#1a1a1a] leading-snug">
-                      {property.name}
-                    </p>
-                    <p className="text-[15px] text-[#6e6e73] mt-0.5">
-                      {property.address}
-                    </p>
+        <div className="px-6 mt-1">
+          <div className="rounded-[14px] bg-white overflow-hidden" style={{ boxShadow: "0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)" }}>
+            {properties.map((property, idx) => {
+              return (
+                <Link
+                  key={property.id}
+                  href={`/dashboard/properties/${property.id}`}
+                  className="card-press block px-5 py-[14px]"
+                  style={{
+                    borderBottom:
+                      idx === properties.length - 1
+                        ? "none"
+                        : "0.5px solid rgba(0,0,0,0.08)",
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[17px] font-semibold text-[#000000] leading-snug">
+                        {property.name}
+                      </p>
+                      <p className="text-[15px] mt-0.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
+                        {property.address}
+                      </p>
+                    </div>
+                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" className="shrink-0 ml-3">
+                      <path d="M1 1L7 7L1 13" stroke="rgba(60,60,67,0.3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

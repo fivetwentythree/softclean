@@ -88,7 +88,7 @@ export function StockStepper({
           onBlur={handleInputBlur}
           onKeyDown={handleKeyDown}
           autoFocus
-          className="text-center text-sm font-semibold text-[#222222] bg-transparent border-none outline-none focus:ring-0 p-0"
+          className="text-center text-sm font-semibold text-[#000000] bg-transparent border-none outline-none focus:ring-0 p-0"
           style={{ width: 48, height: 36 }}
         />
       ) : (
@@ -100,7 +100,7 @@ export function StockStepper({
           <span
             className="text-sm font-semibold transition-opacity"
             style={{
-              color: "#222222",
+              color: "#000000",
               opacity: isPending ? 0.5 : 1,
             }}
           >

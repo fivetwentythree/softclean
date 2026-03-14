@@ -38,7 +38,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
       <div className="px-6">
         <button
           disabled
-          className="bg-[#00A699]/10 text-[#00A699] rounded-full font-semibold py-3.5 w-full text-base cursor-default"
+          className="bg-[#34C759]/10 text-[#34C759] rounded-full font-semibold py-3.5 w-full text-base cursor-default"
         >
           ✓ Cleaned
         </button>
@@ -49,7 +49,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
   if (currentStatus === "unassigned") {
     return (
       <div className="px-6">
-        <p className="text-sm text-[#717171] text-center py-3.5">
+        <p className="text-sm text-center py-3.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
           Waiting to be assigned
         </p>
       </div>
@@ -70,7 +70,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
         <button
           onClick={() => handleUpdate("in_progress")}
           disabled={isPending}
-          className="bg-[#FF385C] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+          className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
         >
           {isPending ? "Updating..." : "Start cleaning"}
         </button>
@@ -81,14 +81,14 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
           <button
             onClick={() => handleUpdate("completed")}
             disabled={isPending}
-            className="bg-[#FF385C] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+            className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
           >
             {isPending ? "Updating..." : "Mark cleaned"}
           </button>
           <button
             onClick={() => handleUpdate("issue_reported")}
             disabled={isPending}
-            className="bg-white border-2 border-[#FF385C] text-[#FF385C] rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+            className="bg-white border-2 border-[#FF3B30] text-[#FF3B30] rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
           >
             {isPending ? "Updating..." : "Report issue"}
           </button>
@@ -99,7 +99,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
         <button
           onClick={() => handleUpdate("in_progress")}
           disabled={isPending}
-          className="bg-[#FF385C] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+          className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
         >
           {isPending ? "Updating..." : "Resume cleaning"}
         </button>

@@ -11,7 +11,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/dashboard"
-          className="inline-block rounded-full bg-[#FF385C] text-white font-semibold px-6 py-3 text-sm"
+          className="inline-block rounded-full bg-[#007AFF] text-white font-semibold px-6 py-3 text-sm"
         >
           Go to dashboard
         </Link>

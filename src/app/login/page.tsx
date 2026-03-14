@@ -33,33 +33,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-[#F2F2F7] flex flex-col items-center justify-center px-6">
+      <div className="w-full max-w-sm bg-white rounded-[20px] shadow-[0_2px_16px_rgba(0,0,0,0.08)] px-7 py-10">
         <div className="mb-10 text-center">
-          <h1 className="text-[28px] font-bold text-[#222222]">SoftClean</h1>
-          <p className="mt-2 text-base text-[#717171]">Welcome back</p>
+          <h1 className="text-[34px] font-bold text-black leading-tight">SoftClean</h1>
+          <p className="mt-2 text-[15px] font-normal text-[rgba(60,60,67,0.6)]">Welcome back</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-[#222222] mb-1.5">Email</label>
+            <label className="block text-[13px] font-semibold text-black tracking-tight mb-1.5">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white border border-[#EBEBEB] rounded-xl px-4 py-3.5 text-sm text-[#222222] placeholder-[#B0B0B0] focus:border-[#222222] focus:ring-0 outline-none transition-colors"
+              className="w-full bg-[rgba(120,120,128,0.08)] border-none rounded-[12px] px-4 py-3.5 text-[17px] text-black placeholder-[rgba(60,60,67,0.3)] focus:ring-2 focus:ring-[rgba(0,122,255,0.3)] outline-none transition-all"
               placeholder="you@company.com"
               required
               autoComplete="email"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#222222] mb-1.5">Password</label>
+            <label className="block text-[13px] font-semibold text-black tracking-tight mb-1.5">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white border border-[#EBEBEB] rounded-xl px-4 py-3.5 text-sm text-[#222222] placeholder-[#B0B0B0] focus:border-[#222222] focus:ring-0 outline-none transition-colors"
+              className="w-full bg-[rgba(120,120,128,0.08)] border-none rounded-[12px] px-4 py-3.5 text-[17px] text-black placeholder-[rgba(60,60,67,0.3)] focus:ring-2 focus:ring-[rgba(0,122,255,0.3)] outline-none transition-all"
               placeholder="••••••••"
               required
               autoComplete="current-password"
@@ -76,7 +76,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#FF385C] text-white font-semibold rounded-full py-3.5 text-base hover:bg-[#E31C5F] disabled:opacity-50 transition-colors"
+            className="w-full bg-[#007AFF] text-white font-semibold rounded-full h-[50px] text-[17px] hover:bg-[#0066DD] disabled:opacity-50 transition-colors"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>

@@ -45,7 +45,7 @@ export function Notification({
     type === "success"
       ? "#00A699"
       : type === "error"
-        ? "#FF385C"
+        ? "#FF3B30"
         : "#222222";
 
   return (

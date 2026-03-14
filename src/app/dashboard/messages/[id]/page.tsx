@@ -171,6 +171,16 @@ export default function ConversationPage() {
         : [...prev, inserted]
     );
 
+    // Trigger push notifications to other participants (fire-and-forget)
+    fetch("/api/push/notify-conversation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversationId: id,
+        messageBody: inserted.body,
+      }),
+    }).catch(() => {});
+
     setNewMessage("");
     setPendingFiles([]);
     setSending(false);
@@ -225,7 +235,7 @@ export default function ConversationPage() {
     <div
       className="flex flex-col h-[100dvh]"
       style={{
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F2F2F7",
         fontFamily:
           "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif",
       }}
@@ -234,8 +244,8 @@ export default function ConversationPage() {
       <div
         className="relative px-5 pt-3 pb-3 backdrop-blur-2xl"
         style={{
-          background: "#FFFFFF",
-          borderBottom: "0.5px solid rgba(0, 0, 0, 0.08)",
+          background: "rgba(242, 242, 247, 0.94)",
+          borderBottom: "0.5px solid rgba(0, 0, 0, 0.12)",
         }}
       >
         <div className="flex items-center gap-3">
@@ -259,12 +269,12 @@ export default function ConversationPage() {
             </svg>
           </button>
           <div className="flex-1 text-center min-w-0">
-            <p className="text-[17px] font-semibold text-[#111827] truncate">
+            <p className="text-[17px] font-semibold text-[#000000] truncate">
               {conversation?.topic
                 ? formatBookingTopic(conversation.topic)
                 : "—"}
             </p>
-            <p className="text-[12px] text-[#8e8e93]">
+            <p className="text-[12px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
               {conversation?.property?.name ?? "General"}
             </p>
           </div>
@@ -273,10 +283,10 @@ export default function ConversationPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 bg-white">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1" style={{ backgroundColor: "#F2F2F7" }}>
         {messages.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-[15px] text-[#8e8e93]">No messages yet</p>
+            <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>No messages yet</p>
           </div>
         ) : (
           messages.map((msg, i) => {
@@ -297,7 +307,7 @@ export default function ConversationPage() {
               <div key={msg.id}>
                 {showDate && (
                   <div className="text-center py-3">
-                    <span className="text-[12px] font-medium text-[#8e8e93] bg-white/90 backdrop-blur-xl rounded-full px-3 py-1">
+                    <span className="text-[12px] font-medium rounded-full px-3 py-1" style={{ color: "rgba(60, 60, 67, 0.6)", backgroundColor: "rgba(242, 242, 247, 0.9)", backdropFilter: "blur(20px)" }}>
                       {formatDateHeader(msg.created_at)}
                     </span>
                   </div>
@@ -312,7 +322,7 @@ export default function ConversationPage() {
                     className={`max-w-[78%] ${isOwn ? "items-end" : "items-start"} flex flex-col`}
                   >
                     {!isOwn && isFirstInGroup && (
-                      <p className="text-[11px] font-medium text-[#8e8e93] mb-1 ml-3">
+                      <p className="text-[11px] font-medium mb-1 ml-3" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {msg.sender?.full_name ?? "—"}
                       </p>
                     )}
@@ -371,7 +381,7 @@ export default function ConversationPage() {
                           </svg>
                           <span
                             className={`text-[13px] font-medium ${
-                              isOwn ? "text-white" : "text-[#111827]"
+                              isOwn ? "text-white" : "text-[#000000]"
                             }`}
                           >
                             View file
@@ -385,11 +395,11 @@ export default function ConversationPage() {
                         className={`relative px-[14px] py-[9px] text-[16px] leading-[21px] ${
                           isOwn
                             ? `bg-[#007AFF] text-white ${
-                                isLastInGroup
-                                  ? "rounded-[18px] rounded-br-[5px]"
-                                  : "rounded-[18px]"
-                              }`
-                            : `bg-[#E5E5EA] text-[#111827] ${
+                                 isLastInGroup
+                                   ? "rounded-[18px] rounded-br-[5px]"
+                                   : "rounded-[18px]"
+                               }`
+                            : `bg-[#E5E5EA] text-[#000000] ${
                                 isLastInGroup
                                   ? "rounded-[18px] rounded-bl-[5px]"
                                   : "rounded-[18px]"
@@ -402,9 +412,10 @@ export default function ConversationPage() {
 
                     {isLastInGroup && (
                       <p
-                        className={`text-[11px] text-[#8e8e93] mt-1 ${
+                        className={`text-[11px] mt-1 ${
                           isOwn ? "mr-2 text-right" : "ml-2"
                         }`}
+                        style={{ color: "rgba(60, 60, 67, 0.6)" }}
                       >
                         {formatTime(msg.created_at)}
                       </p>
@@ -420,7 +431,7 @@ export default function ConversationPage() {
 
       {/* Pending attachments preview */}
       {pendingFiles.length > 0 && (
-        <div className="px-4 py-2 border-t border-[#E5E5EA]/60 bg-white">
+        <div className="px-4 py-2 border-t border-[#E5E5EA]/60" style={{ backgroundColor: "rgba(242, 242, 247, 0.94)" }}>
           <div className="flex gap-2 overflow-x-auto">
             {pendingFiles.map((file, i) => (
               <div key={i} className="relative shrink-0">
@@ -476,8 +487,9 @@ export default function ConversationPage() {
       <div
         className="px-3 py-2 safe-bottom"
         style={{
-          background: "#FFFFFF",
-          borderTop: "0.5px solid rgba(0, 0, 0, 0.08)",
+          background: "rgba(242, 242, 247, 0.94)",
+          borderTop: "0.5px solid rgba(0, 0, 0, 0.12)",
+          backdropFilter: "blur(20px)",
         }}
       >
         {sendError && (
@@ -519,7 +531,7 @@ export default function ConversationPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Message"
-              className="w-full bg-white border border-[#D1D1D6] rounded-full px-4 py-2 text-[16px] text-[#111827] placeholder-[#8e8e93] focus:outline-none focus:border-[#007AFF] transition-colors"
+              className="w-full bg-white border border-[#D1D1D6] rounded-full px-4 py-2 text-[16px] text-[#000000] placeholder-[#8e8e93] focus:outline-none focus:border-[#007AFF] transition-colors"
               style={{ minHeight: 36 }}
             />
           </div>

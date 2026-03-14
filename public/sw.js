@@ -1,4 +1,4 @@
-const CACHE_NAME = "softclean-v2";
+const CACHE_NAME = "softclean-v3";
 const STATIC_ASSETS = ["/", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -67,4 +67,47 @@ self.addEventListener("fetch", (event) => {
     );
     return;
   }
+});
+
+// --- Push Notifications ---
+
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  const data = event.data.json();
+
+  const options = {
+    body: data.body || "",
+    icon: data.icon || "/icons/icon-192x192.png",
+    badge: data.badge || "/icons/icon-192x192.png",
+    data: { url: data.url || "/dashboard" },
+    vibrate: [100, 50, 100],
+    tag: data.tag || "softclean-notification",
+    renotify: true,
+    actions: data.actions || [],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || "SoftClean", options)
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = event.notification.data?.url || "/dashboard";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      // Focus an existing window if one is open
+      for (const client of windowClients) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      // Otherwise open a new window
+      return clients.openWindow(url);
+    })
+  );
 });

@@ -55,11 +55,11 @@ type OrderRow = {
 };
 
 const statusColor: Record<string, string> = {
-  unassigned: "#B0B0B0",
-  assigned: "#FFB400",
-  in_progress: "#00A699",
-  completed: "#DDDDDD",
-  issue_reported: "#FF385C",
+  unassigned: "#8E8E93",
+  assigned: "#FF9500",
+  in_progress: "#007AFF",
+  completed: "#34C759",
+  issue_reported: "#FF3B30",
 };
 
 const statusLabel: Record<string, string> = {
@@ -71,10 +71,10 @@ const statusLabel: Record<string, string> = {
 };
 
 const orderStatusColor: Record<string, string> = {
-  pending: "#FFB400",
-  dispatched: "#717171",
-  delivered: "#00A699",
-  disputed: "#FF385C",
+  pending: "#FF9500",
+  dispatched: "#8E8E93",
+  delivered: "#34C759",
+  disputed: "#FF3B30",
 };
 
 const toDateKey = (value: string) => value.split("T")[0];
@@ -94,13 +94,9 @@ const formatBookingTopic = (topic: string) => {
 };
 
 const glassStyle = {
-  borderRadius: 22,
-  background: "rgba(255, 255, 255, 0.82)",
-  backdropFilter: "blur(40px) saturate(1.8)",
-  WebkitBackdropFilter: "blur(40px) saturate(1.8)",
-  border: "1px solid rgba(255, 255, 255, 0.6)",
-  boxShadow:
-    "0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+  borderRadius: 14,
+  background: "#FFFFFF",
+  boxShadow: "0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)",
 } as const;
 
 export default async function PropertyDetailPage({
@@ -212,23 +208,26 @@ export default async function PropertyDetailPage({
   const messagesForView = filterDate ? bookingConversations ?? [] : conversations ?? [];
 
   return (
-    <div className="bg-white min-h-screen pb-8">
+    <div className="min-h-screen pb-8">
       {/* Header */}
       <div className="px-6 pt-4 pb-6">
         <Link
           href="/dashboard/properties"
-          className="text-sm text-[#717171] hover:text-[#222222] transition-colors mb-3 inline-flex items-center"
+          className="text-[15px] text-[#007AFF] transition-colors mb-3 inline-flex items-center gap-1"
         >
-          ← Sites
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none" className="shrink-0">
+            <path d="M7 1L1 7L7 13" stroke="#007AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Sites
         </Link>
         <div className="flex items-start justify-between gap-3 mt-2">
           <div>
-            <h1 className="text-2xl font-bold text-[#222222]">{property.name}</h1>
-            <p className="text-sm text-[#717171] mt-1">{property.address}</p>
+            <h1 className="text-[22px] font-bold text-[#000000]">{property.name}</h1>
+            <p className="text-[15px] mt-1" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{property.address}</p>
           </div>
         </div>
         {property.access_instructions && (
-          <p className="text-sm text-[#717171] mt-3 leading-relaxed">
+          <p className="text-[15px] mt-3 leading-relaxed" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             {property.access_instructions}
           </p>
         )}
@@ -241,9 +240,9 @@ export default async function PropertyDetailPage({
       />
       {filterDate && (
         <div className="px-6 pt-3 pb-1">
-          <p className="text-sm text-[#717171]">
+          <p className="text-[13px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Showing activity for{" "}
-            <span className="font-medium text-[#222222]">
+            <span className="font-medium text-[#000000]">
               {new Date(filterDate + "T00:00:00").toLocaleDateString(undefined, {
                 weekday: "long",
                 month: "long",
@@ -257,8 +256,8 @@ export default async function PropertyDetailPage({
       {/* Cleaning schedule */}
       <NotificationStack
         header={
-          <span className="text-base font-bold text-[#222222]">
-            Cleaning <span className="text-[#717171] font-normal">· {tasks?.length ?? 0}</span>
+          <span className="text-[13px] font-semibold tracking-wide uppercase" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
+            Cleaning <span className="font-normal">· {tasks?.length ?? 0}</span>
           </span>
         }
       >
@@ -285,17 +284,17 @@ export default async function PropertyDetailPage({
                       >
                         {statusLabel[task.status] ?? task.status}
                       </span>
-                      <span className="text-xs text-[#717171] shrink-0">
+                      <span className="text-xs shrink-0" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {task.scheduled_date}
                       </span>
                     </div>
                     {task.cleaner && (
-                      <p className="text-xs text-[#717171] mt-1.5">
+                      <p className="text-xs mt-1.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {task.cleaner.full_name}
                       </p>
                     )}
                     {task.notes && (
-                      <p className="text-xs text-[#717171] mt-1 truncate">
+                      <p className="text-xs mt-1 truncate" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {task.notes}
                       </p>
                     )}
@@ -312,8 +311,8 @@ export default async function PropertyDetailPage({
       {/* Inventory / Stock */}
       <NotificationStack
         header={
-          <span className="text-base font-bold text-[#222222]">
-            Stock <span className="text-[#717171] font-normal">· {inventory?.length ?? 0}</span>
+          <span className="text-[13px] font-semibold tracking-wide uppercase" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
+            Stock <span className="font-normal">· {inventory?.length ?? 0}</span>
           </span>
         }
       >
@@ -334,9 +333,9 @@ export default async function PropertyDetailPage({
       {/* Messages */}
       <NotificationStack
         header={
-          <span className="text-base font-bold text-[#222222]">
+          <span className="text-[13px] font-semibold tracking-wide uppercase" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
             Messages{" "}
-            <span className="text-[#717171] font-normal">
+            <span className="font-normal">
               · {messagesForView.length}
             </span>
           </span>
@@ -361,11 +360,11 @@ export default async function PropertyDetailPage({
                 style={glassStyle}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-bold text-[#222222] truncate">
+                  <p className="text-sm font-bold text-[#000000] truncate">
                     {formatBookingTopic(convo.topic)}
                   </p>
                 </div>
-                <p className="text-xs text-[#717171] mt-1">
+                <p className="text-xs mt-1" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                   {rangeLabel
                     ? `${rangeLabel}${guestLabel ? ` · ${guestLabel}` : ""}`
                     : new Date(convo.updated_at).toLocaleDateString()}
@@ -383,14 +382,14 @@ export default async function PropertyDetailPage({
       {/* Orders */}
       <NotificationStack
         header={
-          <span className="text-base font-bold text-[#222222]">
-            Orders <span className="text-[#717171] font-normal">· {orders?.length ?? 0}</span>
+          <span className="text-[13px] font-semibold tracking-wide uppercase" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
+            Orders <span className="font-normal">· {orders?.length ?? 0}</span>
           </span>
         }
       >
         {orders?.length ? (
           orders.map((order) => {
-            const color = orderStatusColor[order.status] ?? "#717171";
+            const color = orderStatusColor[order.status] ?? "#8E8E93";
             return (
               <div
                 key={order.id}
@@ -399,11 +398,11 @@ export default async function PropertyDetailPage({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-[#222222]">
+                    <p className="text-sm font-bold text-[#000000]">
                       {new Date(order.order_date).toLocaleDateString()}
                     </p>
                     {order.supplier && (
-                      <p className="text-xs text-[#717171] mt-0.5">
+                      <p className="text-xs mt-0.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                         {order.supplier.full_name}
                       </p>
                     )}
@@ -416,18 +415,18 @@ export default async function PropertyDetailPage({
                   </span>
                 </div>
                 {order.items?.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-[#EBEBEB]/50 space-y-1.5">
+                  <div className="mt-3 pt-3 space-y-1.5" style={{ borderTop: "0.5px solid rgba(0,0,0,0.08)" }}>
                     {order.items.map((line, i) => (
                       <div
                         key={i}
                         className="flex items-center justify-between text-sm"
                       >
-                        <span className="text-[#222222]">{line.item?.name}</span>
-                        <span className="text-[#717171]">
+                        <span className="text-[#000000]">{line.item?.name}</span>
+                        <span style={{ color: "rgba(60, 60, 67, 0.6)" }}>
                           {line.quantity_requested} {line.item?.unit}
                           {line.quantity_delivered != null &&
                             line.quantity_delivered > 0 && (
-                              <span className="text-[#00A699] ml-2">
+                              <span className="text-[#34C759] ml-2">
                                 ✓ {line.quantity_delivered}
                               </span>
                             )}
@@ -450,7 +449,7 @@ export default async function PropertyDetailPage({
 function Empty({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-6 mb-3 py-10 text-center" style={glassStyle}>
-      <p className="text-sm text-[#717171]">{children}</p>
+      <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{children}</p>
     </div>
   );
 }
@@ -469,7 +468,7 @@ function StockCard({
   };
   critical?: boolean;
 }) {
-  const accent = critical ? "#FF385C" : "#00A699";
+  const accent = critical ? "#FF3B30" : "#34C759";
   return (
     <div
       className="mx-6 mb-3 flex items-center justify-between px-5 py-4"
@@ -481,8 +480,8 @@ function StockCard({
           style={{ width: 3, backgroundColor: accent }}
         />
         <div>
-          <p className="text-sm font-bold text-[#222]">{inv.item?.name}</p>
-          <p className="text-xs text-[#717171] mt-0.5">{inv.item?.category}</p>
+          <p className="text-sm font-bold text-[#000000]">{inv.item?.name}</p>
+          <p className="text-xs mt-0.5" style={{ color: "rgba(60, 60, 67, 0.6)" }}>{inv.item?.category}</p>
         </div>
       </div>
       <div className="flex flex-col items-end gap-1.5">
@@ -492,7 +491,7 @@ function StockCard({
           quantity={inv.current_quantity}
           unit={inv.item?.unit ?? "units"}
         />
-        <p className="text-xs text-[#717171]">
+        <p className="text-xs" style={{ color: "rgba(60, 60, 67, 0.6)" }}>
           min {inv.minimum_threshold} {inv.item?.unit}
         </p>
       </div>

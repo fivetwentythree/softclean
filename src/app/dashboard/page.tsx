@@ -12,11 +12,11 @@ type TaskRow = {
 };
 
 const statusColor: Record<string, string> = {
-  unassigned: "#B0B0B0",
-  assigned: "#FFB400",
-  in_progress: "#00A699",
-  completed: "#DDDDDD",
-  issue_reported: "#FF385C",
+  unassigned: "#8E8E93",
+  assigned: "#FF9500",
+  in_progress: "#34C759",
+  completed: "#C7C7CC",
+  issue_reported: "#FF3B30",
 };
 
 const daysUntil = (dateStr: string) => {
@@ -75,13 +75,13 @@ export default async function DashboardPage() {
   const active = nextTask?.[0];
 
   return (
-    <div className="bg-white min-h-screen">
+    <div style={{ background: "transparent", minHeight: "100vh" }}>
       {/* Low stock alerts */}
       {lowStock.length > 0 && (
-        <div className="pt-4">
+        <div style={{ paddingTop: 16 }}>
           <NotificationStack
             header={
-              <span className="text-sm font-bold text-[#FF385C]">
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#FF3B30" }}>
                 Low stock · {lowStock.length}
               </span>
             }
@@ -89,28 +89,40 @@ export default async function DashboardPage() {
             {lowStock.map((s, i) => (
               <div
                 key={i}
-                className="mx-6 flex items-center gap-3 px-5 py-4"
                 style={{
+                  marginLeft: 24,
+                  marginRight: 24,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "14px 18px",
                   borderRadius: 22,
                   background: "rgba(255, 255, 255, 0.82)",
                   backdropFilter: "blur(40px) saturate(1.8)",
+                  WebkitBackdropFilter: "blur(40px) saturate(1.8)",
                   border: "1px solid rgba(255, 255, 255, 0.6)",
                   boxShadow:
                     "0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
                 }}
               >
                 <span
-                  className="shrink-0 flex items-center justify-center text-xs font-bold text-white"
                   style={{
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "#FFFFFF",
                     width: 28,
                     height: 28,
                     borderRadius: 9,
-                    backgroundColor: "#FF385C",
+                    backgroundColor: "#FF3B30",
                   }}
                 >
                   !
                 </span>
-                <span className="text-sm font-medium text-[#222222]">
+                <span style={{ fontSize: 14, fontWeight: 500, color: "#1C1C1E" }}>
                   {s.item?.name} at {s.property?.name} — {s.current_quantity} left
                 </span>
               </div>
@@ -120,75 +132,151 @@ export default async function DashboardPage() {
       )}
 
       {/* Next up */}
-      <div className="px-6 pt-8 pb-4">
-        <h2 className="text-2xl font-bold text-[#222222]">Next up</h2>
-        <p className="text-sm text-[#717171] mt-1">{todayCount ?? 0} tasks today</p>
+      <div style={{ padding: "32px 24px 16px" }}>
+        <h2 style={{ fontSize: 34, fontWeight: 700, color: "#1C1C1E", letterSpacing: 0.37, lineHeight: 1.1 }}>
+          Next up
+        </h2>
+        <p style={{ fontSize: 15, color: "rgba(60, 60, 67, 0.6)", marginTop: 4 }}>
+          {todayCount ?? 0} tasks today
+        </p>
       </div>
 
       {active ? (
         <Link
           href={`/dashboard/tasks/${active.id}`}
-          className="card-press block mx-6 mb-6 bg-white rounded-2xl p-5"
-          style={{ boxShadow: "0 3px 10px rgba(0,0,0,0.1)" }}
+          className="card-press"
+          style={{
+            display: "block",
+            margin: "0 24px 24px",
+            background: "#FFFFFF",
+            borderRadius: 16,
+            padding: 20,
+            boxShadow: "0 2px 16px rgba(0, 0, 0, 0.08)",
+            textDecoration: "none",
+          }}
         >
-          <div className="flex items-start gap-3">
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
             <span
-              className="mt-1.5 shrink-0 block w-2 h-2 rounded-full"
-              style={{ backgroundColor: statusColor[active.status] ?? "#B0B0B0" }}
+              style={{
+                marginTop: 8,
+                flexShrink: 0,
+                display: "block",
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: statusColor[active.status] ?? "#8E8E93",
+              }}
             />
-            <div className="flex-1 min-w-0">
-              <p className="text-lg font-bold text-[#222222]">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 17, fontWeight: 600, color: "#1C1C1E" }}>
                 {active.property?.name ?? "Unassigned"}
               </p>
-              <p className="text-sm text-[#717171] mt-0.5">{active.property?.address}</p>
-              <div className="flex items-center gap-3 mt-3">
+              <p style={{ fontSize: 14, color: "rgba(60, 60, 67, 0.6)", marginTop: 2 }}>
+                {active.property?.address}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12 }}>
                 <span
-                  className="text-xs font-medium px-2.5 py-1 rounded-full"
                   style={{
-                    backgroundColor: `${statusColor[active.status] ?? "#B0B0B0"}1A`,
-                    color: statusColor[active.status] ?? "#B0B0B0",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    padding: "4px 10px",
+                    borderRadius: 100,
+                    backgroundColor: `${statusColor[active.status] ?? "#8E8E93"}1A`,
+                    color: statusColor[active.status] ?? "#8E8E93",
+                    textTransform: "capitalize",
                   }}
                 >
                   {active.status.replace("_", " ")}
                 </span>
-                <span className="text-xs text-[#717171]">{active.scheduled_date}</span>
+                <span style={{ fontSize: 13, color: "rgba(60, 60, 67, 0.6)" }}>
+                  {active.scheduled_date}
+                </span>
               </div>
               {active.notes && (
-                <p className="text-sm text-[#717171] mt-3 leading-relaxed">{active.notes}</p>
+                <p style={{ fontSize: 14, color: "rgba(60, 60, 67, 0.6)", marginTop: 12, lineHeight: 1.5 }}>
+                  {active.notes}
+                </p>
               )}
             </div>
           </div>
         </Link>
       ) : (
-        <div className="mx-6 mb-6 rounded-2xl border border-[#EBEBEB] px-5 py-10 text-center">
-          <p className="text-sm text-[#717171]">No pending tasks</p>
+        <div
+          style={{
+            margin: "0 24px 24px",
+            borderRadius: 16,
+            background: "#FFFFFF",
+            boxShadow: "0 2px 16px rgba(0, 0, 0, 0.08)",
+            padding: "40px 20px",
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontSize: 15, color: "rgba(60, 60, 67, 0.3)" }}>No pending tasks</p>
         </div>
       )}
 
       {/* Coming up */}
       {upcoming && upcoming.length > 0 && (
-        <div className="px-6 pt-2 pb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-[#222222]">Coming up</h3>
+        <div style={{ padding: "8px 24px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+            <h3 style={{ fontSize: 22, fontWeight: 700, color: "#1C1C1E" }}>Coming up</h3>
             <Link
               href="/dashboard/tasks"
-              className="text-sm font-medium text-[#007AFF]"
+              style={{ fontSize: 15, fontWeight: 600, color: "#007AFF", textDecoration: "none" }}
             >
               All tasks
             </Link>
           </div>
-          <div className="space-y-2">
-            {upcoming.map((task) => (
+          <div
+            style={{
+              background: "#FFFFFF",
+              borderRadius: 14,
+              boxShadow: "0 2px 16px rgba(0, 0, 0, 0.08)",
+              overflow: "hidden",
+            }}
+          >
+            {upcoming.map((task, index) => (
               <Link
                 key={task.id}
                 href={`/dashboard/tasks/${task.id}`}
-                className="card-press flex items-center gap-3 rounded-[18px] px-4 py-3.5 border border-[#EBEBEB] bg-white active:bg-[#F7F7F7] transition-colors"
+                className="card-press"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "14px 16px",
+                  textDecoration: "none",
+                  borderBottom:
+                    index < upcoming.length - 1
+                      ? "0.5px solid rgba(60, 60, 67, 0.12)"
+                      : "none",
+                }}
               >
-                <p className="flex-1 text-sm font-medium text-[#222222]">{task.property?.name}</p>
-                <span className="text-xs text-[#8e8e93]">
+                <span
+                  style={{
+                    flexShrink: 0,
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: statusColor[task.status] ?? "#8E8E93",
+                  }}
+                />
+                <p style={{ flex: 1, fontSize: 15, fontWeight: 500, color: "#1C1C1E", margin: 0 }}>
+                  {task.property?.name}
+                </p>
+                <span style={{ fontSize: 13, color: "rgba(60, 60, 67, 0.6)" }}>
                   {formatShortDate(task.scheduled_date)}
                 </span>
-                <span className="text-xs font-semibold text-[#007AFF] bg-[#007AFF]/10 rounded-full px-2 py-0.5">
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#007AFF",
+                    backgroundColor: "rgba(0, 122, 255, 0.1)",
+                    borderRadius: 100,
+                    padding: "3px 10px",
+                  }}
+                >
                   in {daysUntil(task.scheduled_date)} days
                 </span>
               </Link>

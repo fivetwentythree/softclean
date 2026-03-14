@@ -58,9 +58,9 @@ export default async function InventoryPage() {
   const properties = Array.from(grouped.entries());
 
   return (
-    <div className="bg-white min-h-screen pb-28">
+    <div className="min-h-screen pb-28">
       <div className="px-6 pt-8 pb-4 flex items-center justify-between">
-        <h1 className="text-[32px] font-bold tracking-tight text-[#1a1a1a]">
+        <h1 className="text-[22px] font-bold tracking-tight text-[#000000]">
           Stock
         </h1>
         <AddItemButton properties={propertyList} />
@@ -68,7 +68,7 @@ export default async function InventoryPage() {
 
       {!inventory?.length ? (
         <div className="px-6 py-16 text-center">
-          <p className="text-sm text-[#717171]">No inventory tracked</p>
+          <p className="text-[15px]" style={{ color: "rgba(60, 60, 67, 0.6)" }}>No inventory tracked</p>
         </div>
       ) : (
         <div className="space-y-2">

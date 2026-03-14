@@ -96,7 +96,7 @@ export function SwipeToDeleteRow({
 
   if (confirming) {
     return (
-      <div className="rounded-[18px] border border-[#FF385C]/20 bg-[#FF385C]/5 px-4 py-3.5">
+      <div className="rounded-[18px] border border-[#FF3B30]/20 bg-[#FF3B30]/5 px-4 py-3.5">
         <p className="text-[14px] text-[#1a1a1a] mb-3">
           Remove <span className="font-semibold">{itemName}</span> from this
           property?
