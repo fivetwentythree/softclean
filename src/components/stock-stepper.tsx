@@ -57,7 +57,7 @@ export function StockStepper({
       <button
         onClick={() => handleStep(-1)}
         disabled={isPending || value <= 0}
-        className="flex items-center justify-center disabled:opacity-30 transition-opacity"
+        className="btn-press flex items-center justify-center disabled:opacity-30 transition-opacity"
         style={{
           width: 36,
           height: 36,
@@ -122,7 +122,7 @@ export function StockStepper({
       <button
         onClick={() => handleStep(1)}
         disabled={isPending}
-        className="flex items-center justify-center disabled:opacity-30 transition-opacity"
+        className="btn-press flex items-center justify-center disabled:opacity-30 transition-opacity"
         style={{
           width: 36,
           height: 36,

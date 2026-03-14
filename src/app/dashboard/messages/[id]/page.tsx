@@ -102,8 +102,14 @@ export default function ConversationPage() {
     };
   }, [id, supabase]);
 
+  const initialLoadRef = useRef(true);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (initialLoadRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "instant" });
+      initialLoadRef.current = false;
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const uploadFile = useCallback(
@@ -538,7 +544,7 @@ export default function ConversationPage() {
             disabled={
               (!newMessage.trim() && pendingFiles.length === 0) || sending
             }
-            className="flex items-center justify-center w-9 h-9 rounded-full transition-all mb-0.5 disabled:opacity-30"
+            className="btn-press flex items-center justify-center w-9 h-9 rounded-full transition-all mb-0.5 disabled:opacity-30"
             style={{ backgroundColor: "#007AFF" }}
           >
             <svg

@@ -70,7 +70,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
         <button
           onClick={() => handleUpdate("in_progress")}
           disabled={isPending}
-          className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+          className="btn-press bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
         >
           {isPending ? "Updating..." : "Start cleaning"}
         </button>
@@ -81,14 +81,14 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
           <button
             onClick={() => handleUpdate("completed")}
             disabled={isPending}
-            className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+            className="btn-press bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
           >
             {isPending ? "Updating..." : "Mark cleaned"}
           </button>
           <button
             onClick={() => handleUpdate("issue_reported")}
             disabled={isPending}
-            className="bg-white border-2 border-[#FF3B30] text-[#FF3B30] rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+            className="btn-press bg-white border-2 border-[#FF3B30] text-[#FF3B30] rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
           >
             {isPending ? "Updating..." : "Report issue"}
           </button>
@@ -99,7 +99,7 @@ export function TaskActions({ taskId, currentStatus, userRole }: TaskActionsProp
         <button
           onClick={() => handleUpdate("in_progress")}
           disabled={isPending}
-          className="bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
+          className="btn-press bg-[#007AFF] text-white rounded-full font-semibold py-3.5 w-full text-base disabled:opacity-50 transition-colors"
         >
           {isPending ? "Updating..." : "Resume cleaning"}
         </button>

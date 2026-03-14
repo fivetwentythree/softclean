@@ -65,24 +65,25 @@ export default async function TaskDetailPage({
   } = await supabase.auth.getUser();
   if (!user) notFound();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single<{ role: string }>();
-
-  const { data: task } = await supabase
-    .from("cleaning_tasks")
-    .select(
+  const [{ data: profile }, { data: task }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single<{ role: string }>(),
+    supabase
+      .from("cleaning_tasks")
+      .select(
+        `
+        id, scheduled_date, status, notes, started_at, completed_at, estimated_duration_minutes,
+        property:properties(name, address, access_instructions),
+        cleaner:profiles!cleaning_tasks_cleaner_id_fkey(full_name, phone),
+        booking:bookings(check_in_at, check_out_at, guest_count)
       `
-      id, scheduled_date, status, notes, started_at, completed_at, estimated_duration_minutes,
-      property:properties(name, address, access_instructions),
-      cleaner:profiles!cleaning_tasks_cleaner_id_fkey(full_name, phone),
-      booking:bookings(check_in_at, check_out_at, guest_count)
-    `
-    )
-    .eq("id", id)
-    .single<Task>();
+      )
+      .eq("id", id)
+      .single<Task>(),
+  ]);
 
   if (!task) notFound();
 

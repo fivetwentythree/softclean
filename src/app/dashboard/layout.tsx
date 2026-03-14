@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/bottom-nav";
@@ -71,7 +72,9 @@ export default async function DashboardLayout({
         </div>
       </header>
       <main className="max-w-lg mx-auto">
-        {children}
+        <ViewTransition name="page">
+          {children}
+        </ViewTransition>
       </main>
       <PushPrompt />
       <BottomNav role={profile?.role ?? "cleaner"} />

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { NotificationStack } from "@/components/notification-stack";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 
 type TaskRow = {
   id: string;
@@ -41,42 +42,39 @@ export default async function DashboardPage() {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // Get the most urgent/next task
-  const { data: nextTask } = await supabase
-    .from("cleaning_tasks")
-    .select("id, scheduled_date, status, notes, started_at, property:properties(name, address)")
-    .in("status", ["assigned", "in_progress", "unassigned"])
-    .lte("scheduled_date", today)
-    .order("scheduled_date", { ascending: true })
-    .limit(1)
-    .returns<TaskRow[]>();
-
-  // Get today's task count
-  const { count: todayCount } = await supabase
-    .from("cleaning_tasks")
-    .select("*", { count: "exact", head: true })
-    .eq("scheduled_date", today);
-
-  // Get upcoming tasks
-  const { data: upcoming } = await supabase
-    .from("cleaning_tasks")
-    .select("id, scheduled_date, status, notes, started_at, property:properties(name, address)")
-    .in("status", ["assigned", "in_progress", "unassigned"])
-    .order("scheduled_date", { ascending: true })
-    .limit(5)
-    .returns<TaskRow[]>();
-
-  // Get critical inventory
-  const { data: criticalStock } = await supabase
-    .from("property_inventory")
-    .select("current_quantity, minimum_threshold, property:properties(name), item:inventory_items(name)")
-    .returns<{ current_quantity: number; minimum_threshold: number; property: { name: string } | null; item: { name: string } | null }[]>();
+  const [{ data: nextTask }, { count: todayCount }, { data: upcoming }, { data: criticalStock }] =
+    await Promise.all([
+      supabase
+        .from("cleaning_tasks")
+        .select("id, scheduled_date, status, notes, started_at, property:properties(name, address)")
+        .in("status", ["assigned", "in_progress", "unassigned"])
+        .lte("scheduled_date", today)
+        .order("scheduled_date", { ascending: true })
+        .limit(1)
+        .returns<TaskRow[]>(),
+      supabase
+        .from("cleaning_tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("scheduled_date", today),
+      supabase
+        .from("cleaning_tasks")
+        .select("id, scheduled_date, status, notes, started_at, property:properties(name, address)")
+        .in("status", ["assigned", "in_progress", "unassigned"])
+        .order("scheduled_date", { ascending: true })
+        .limit(5)
+        .returns<TaskRow[]>(),
+      supabase
+        .from("property_inventory")
+        .select("current_quantity, minimum_threshold, property:properties(name), item:inventory_items(name)")
+        .returns<{ current_quantity: number; minimum_threshold: number; property: { name: string } | null; item: { name: string } | null }[]>(),
+    ]);
 
   const lowStock = criticalStock?.filter((s) => s.current_quantity <= s.minimum_threshold) ?? [];
 
   const active = nextTask?.[0];
 
   return (
+    <PullToRefresh>
     <div style={{ background: "transparent", minHeight: "100vh" }}>
       {/* Low stock alerts */}
       {lowStock.length > 0 && (
@@ -287,5 +285,6 @@ export default async function DashboardPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
